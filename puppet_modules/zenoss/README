@@ -1,0 +1,16 @@
+Depends on download definition.  should change this to be a utility module
+
+#Todo
+skip first login.
+add users ( realize ) ?
+
+define templates
+define locations
+define groups
+
+# Requires mysql to be setup and running locally 
+# Example usage
+zenoss { "3.2.0": }
+zenpatch { ["26334","26335","26337"]: }
+zenpack { "ZenPacks.example.Foo-1.0.0-py2.6.egg":
+            site => "http://example.com/download/files/" }
