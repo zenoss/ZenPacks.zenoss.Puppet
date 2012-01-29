@@ -1,3 +1,4 @@
+
 # BaseTestCase is a subclass of ZopeTestCase which is ultimately a subclass of
 # Python's standard unittest.TestCase. Because of this the following
 # documentation on unit testing in Zope and Python are both applicable here.
@@ -8,7 +9,12 @@
 # Zope Unit Testing
 # http://wiki.zope.org/zope2/Testing
 
+import Globals
+
 from Products.ZenTestCase.BaseTestCase import BaseTestCase
+from Products.ZenUtils.Utils import unused
+
+unused(Globals)
 
 
 class TestExample(BaseTestCase):
