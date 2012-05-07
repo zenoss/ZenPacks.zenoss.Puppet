@@ -5,7 +5,7 @@
 NAME = "ZenPacks.zenoss.Puppet"
 VERSION = "1.0.0"
 AUTHOR = ""
-LICENSE = ""
+LICENSE = "GPLv2"
 NAMESPACE_PACKAGES = ['ZenPacks', 'ZenPacks.zenoss']
 PACKAGES = ['ZenPacks', 'ZenPacks.zenoss', 'ZenPacks.zenoss.Puppet']
 INSTALL_REQUIRES = []
