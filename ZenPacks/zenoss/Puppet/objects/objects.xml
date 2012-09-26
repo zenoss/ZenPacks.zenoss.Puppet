@@ -1,3 +1,54 @@
 <?xml version="1.0"?>
 <objects>
+<!-- ('', 'zport', 'dmd', 'Processes', 'Puppet') -->
+<object id='/zport/dmd/Processes/Puppet' module='Products.ZenModel.OSProcessOrganizer' class='OSProcessOrganizer'>
+<property id='zendoc' type='string'>
+Puppet Configuration Management System http://docs.puppetlabs.com/
+</property>
+<property type="text" id="description" mode="w" >
+Puppet Configuration Management System http://docs.puppetlabs.com/
+</property>
+<tomanycont id='osProcessClasses'>
+<object id='Puppet Client' module='Products.ZenModel.OSProcessClass' class='OSProcessClass'>
+<property id='zendoc' type='string'>
+Daemon that runs on the client system
+</property>
+<property type="string" id="name" mode="w" >
+Puppet Client
+</property>
+<property type="string" id="regex" mode="w" >
+.*puppetd
+</property>
+<property type="boolean" id="ignoreParameters" mode="w" >
+False
+</property>
+<property type="text" id="description" mode="w" >
+Daemon that runs on the client system
+</property>
+<property type="int" id="sequence" mode="w" >
+0
+</property>
+</object>
+<object id='Puppet Master' module='Products.ZenModel.OSProcessClass' class='OSProcessClass'>
+<property id='zendoc' type='string'>
+Puppet server daemon
+</property>
+<property type="string" id="name" mode="w" >
+Puppet Master
+</property>
+<property type="string" id="regex" mode="w" >
+.*puppetmasterd
+</property>
+<property type="boolean" id="ignoreParameters" mode="w" >
+False
+</property>
+<property type="text" id="description" mode="w" >
+Puppet server daemon
+</property>
+<property type="int" id="sequence" mode="w" >
+0
+</property>
+</object>
+</tomanycont>
+</object>
 </objects>
