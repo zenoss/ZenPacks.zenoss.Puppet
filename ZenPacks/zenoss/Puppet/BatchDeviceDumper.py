@@ -206,6 +206,11 @@ class BatchDeviceDumper(ZCmdBase):
         if groups:
             result.append("setGroups=" + repr(groups))
 
+        if self.options.noorganizers:
+            # Need to be able to tell which device class we came from
+            result.append("moveDevices=('%s', '%s')" % (
+                          '/'.join(dev.getPrimaryPath()[:-2]), dev.id))
+
         return (repr(dev.getId()), sorted(result))
 
     def _normalizePaths(self, objList):
@@ -277,7 +282,7 @@ class BatchDeviceDumper(ZCmdBase):
         @return: number of Locations, Systems or Groups dumped
         @rtype: int
         """
-        if getattr(self.options,'rootPath',None) is None:
+        if getattr(self.options, 'rootPath', None) is None:
             # BatchDeviceDumper.run() already calls ._prepRoot() before we get here, but leaving this in
             # for unit tests and unexpected uses
             if not self._prepRoot():
@@ -335,7 +340,7 @@ class BatchDeviceDumper(ZCmdBase):
         @return: number of leaf Devices and DeviceClasses dumped
         @rtype: dict
         """
-        if getattr(self.options,'rootPath',None) is None:
+        if getattr(self.options, 'rootPath', None) is None:
             # BatchDeviceDumper.run() already calls ._prepRoot() before we get here, but leaving this in
             # for unit tests and unexpected uses
             if not self._prepRoot():
@@ -351,17 +356,19 @@ class BatchDeviceDumper(ZCmdBase):
 
         # Dump DeviceClass if not pruned
         if not self.options.prune or branch.getPrimaryUrlPath() in self.rootPath:
-            outFile.write("\n")
-            (name, props) = self._emitOrg(branch)
-            result['DeviceClasses'] += 1
-            outFile.write("\n%s %s\n" % (name, ", ".join(props)))
-            self.emittedDeviceClasses.add(branch)
+            if not self.options.noorganizers:
+                outFile.write("\n")
+                (name, props) = self._emitOrg(branch)
+                result['DeviceClasses'] += 1
+                outFile.write("\n%s %s\n" % (name, ", ".join(props)))
+                self.emittedDeviceClasses.add(branch)
 
         # Dump all eligible Devices in this DeviceClass (pruning occurs in .chooseDevice())
         for dev in self.chooseDevice(branch,self.makeRegexMatcher()):
-            (name,props) = self._emitDev(dev)
-            # enusre that if we've pruned Organizers above this Device that we emit them first
-            result['DeviceClasses'] += self._backtraceOrg(outFile, dev)
+            (name, props) = self._emitDev(dev)
+            if not self.options.noorganizers:
+                # ensure that if we've pruned Organizers above this Device that we emit them first
+                result['DeviceClasses'] += self._backtraceOrg(outFile, dev)
             outFile.write("\n%s %s\n" % (name, ", ".join(props)))
             result['Devices'] += 1
         
@@ -399,6 +406,11 @@ class BatchDeviceDumper(ZCmdBase):
              dest = 'allzprops', default = False,
              action = 'store_true',
              help = "Should z properties (including acquired values) be dumped?")
+
+        self.parser.add_option('--noorganizers',
+             dest = 'noorganizers', default = False,
+             action = 'store_true',
+             help = "Should organizers (device classes, groups, etc) be dumped?")
 
     def run(self):
         """

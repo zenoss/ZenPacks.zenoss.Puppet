@@ -26,12 +26,15 @@ class PuppetFacade(ZuulFacade):
     implements(IPuppetFacade)
 
     def exportDevices(self, deviceClass='/', options={}):
-        dumper = BatchDeviceDumper()
+        dumper = BatchDeviceDumper(noopts=True)
         output = StringIO()
 
         # Set command-line options
         dumper.options.root = deviceClass[1:]
         dumper.options.allzprops = True
+        dumper.options.noorganizers = True
+        # Hidden 'option' in BatchDeviceDump
+        dumper.options.pruneLSGO = True
         self._setOptions(dumper, options)
 
         dumpedCount = dumper.listDeviceTree(output)
@@ -41,7 +44,7 @@ class PuppetFacade(ZuulFacade):
         return data, dumpedCount
 
     def importDevices(self, data, options={}):
-        loader = BatchDeviceLoader()
+        loader = BatchDeviceLoader(noopts=True)
         if isinstance(data, str):
             data = data.split('\n')
 

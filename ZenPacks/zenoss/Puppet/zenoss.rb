@@ -10,6 +10,7 @@ require 'json'
 
 
 module Zenoss
+    # An interface to the Zenoss JSON API 
     class Session
 
         def initialize(baseurl='http://localhost:8080', user='admin', password='zenoss')
@@ -35,6 +36,9 @@ module Zenoss
             }
             @client = HTTPClient.new()
             @client.receive_timeout = 300
+
+            # Just in case we go through SSL.
+            @client.ssl_config.verify_mode = OpenSSL::SSL::VERIFY_NONE
             result = @client.post(url, headers)
 
             if result.status == 302
@@ -68,8 +72,10 @@ module Zenoss
             }
             reqData = [request].to_json()
 
-            # Increment the request count ('tid'). More important if sending multiple
-            # calls in a single request
+            # Increment the request count ('tid'). This is important
+            # if sending multiple calls over time.
+            # The same call with the same tid will be ignored, but
+            # the same call with a new tid will be executed.
             @tid += 1
 
             result = @client.post(url, reqData, headers)
@@ -83,13 +89,14 @@ module Zenoss
     end
 end
 
+
 if __FILE__ == $0
-    blue = Zenoss::Session.new()
+    connection = Zenoss::Session.new()
 
     data = {
-      'id' => {'uid' => '/zport/dmd/Devices/Server/Linux/devices/localhost.localdomain'},
-      'idScheme' => 'uid'
+      'deviceClass' => '/',
+      'options' => {}
     }
-    result = blue.request('PortalRouter', 'fetch_router', 'listMetricIds', data=[data])
+    result = connection.request('PuppetRouter', 'puppet_router', 'exportDevices', data=[data])
     puts result
 end

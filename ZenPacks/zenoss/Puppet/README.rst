@@ -18,6 +18,25 @@ clients.
 The ``Processes`` list is also updated with information about the Puppet
 (master and client) processes.
 
+A JSON API for importing and exporting ``zenbatchload`` format configuration
+files is available:
+
+========== ================
+Name       Value
+========== ================
+``action`` PuppetRouter
+``router`` puppet_router
+========== ================
+
+The methods available are:
+
+``exportDevices``
+    Export out the list of devices, and the complete listing of acquired
+    and local zproperties.
+
+``importDevices``
+    Import a ``zenbatchload`` file.
+
 Prerequisites
 ===============================================================================
 
@@ -26,7 +45,10 @@ Prerequisite        Restriction
 ==================  =========================================================
 Product             Zenoss 4.1.1 or higher
 Required ZenPacks   ``ZenPacks.zenoss.Puppet``
-Other dependencies  None
+Other dependencies  The ``zenoss.rb`` integration requires the following
+                    Ruby gems:
+                    * ``httpclient``
+                    * ``json``
 ==================  =========================================================
 
 Usage
@@ -40,6 +62,17 @@ Once a Puppet master has been identificed, follow this procedure:
 #. Click on the ``Modeler Plugins`` link.
 #. Ensure that the modeler plugin ``zenoss.cmd.Puppet`` is selected.
 #. Click on the ``Save`` button.
+
+Managing Zenoss Configuration via Puppet
+----------------------------------------------------------------------------
+
+#. Create a new user with ``Manager`` privileges specifically for Puppet.
+#. Update the ``bin/getDeviceExport.sh`` script (or the 
+   ``bin/getDeviceExport-ssl.sh`` script if using SSL) to use the new
+   credentials.
+#. Run the ``exportDevices.sh`` script to verify the router/facade pair
+   is working.
+#. Update the ``zenoss.rb`` calls to include the new credentials.
 
 Installing
 -----------
