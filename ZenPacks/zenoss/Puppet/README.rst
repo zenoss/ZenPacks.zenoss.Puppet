@@ -74,6 +74,15 @@ Managing Zenoss Configuration via Puppet
    is working.
 #. Update the ``zenoss.rb`` calls to include the new credentials.
 
+Troubleshooting
+-------------------
+
+Unauthorized Messages
+***********************
+This usually indicates a credentials issue.  Please verify the username
+and password combinations.
+
+
 Installing
 -----------
 Install the ZenPack via the command line and restart Zenoss:

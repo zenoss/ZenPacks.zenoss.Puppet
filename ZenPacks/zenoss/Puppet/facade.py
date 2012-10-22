@@ -37,10 +37,28 @@ class PuppetFacade(ZuulFacade):
         dumper.options.pruneLSGO = True
         self._setOptions(dumper, options)
 
+        # Export out custom list of properties
+        def isPropExportable(propdict):
+            id = propdict['id']
+            if id == 'zDeviceTemplate':
+                return True
+            return propdict['islocal']
+        dumper.isPropExportable = isPropExportable
+
+        # Don't import out all getter/setter pairs either
+        dumper.ignoreSetters += (
+            'setLastChange', 'setHWProductKey', 'setHWSerialNumber',
+            'setOSProductKey', 'setPriority',
+        )
+
         dumpedCount = dumper.listDeviceTree(output)
         output.seek(0)
-        data = output.read()
+        data = output.readlines()
         output.close()
+
+        # Dump the results in sorted order to make file
+        # comparisons easier.
+        data = '\n'.join(sorted(data))
         return data, dumpedCount
 
     def importDevices(self, data, options={}):
