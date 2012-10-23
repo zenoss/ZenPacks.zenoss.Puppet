@@ -5,7 +5,7 @@ ZenPacks.zenoss.Puppet
 .. contents::
 
 About
--------------------------------------------------------------------------------
+===============================================================================
 This ZenPack provides a mechanism to gather information from the Puppet
 master about Puppet clients.
 Information about the Puppet system can be found at http://docs.puppetlabs.com/
