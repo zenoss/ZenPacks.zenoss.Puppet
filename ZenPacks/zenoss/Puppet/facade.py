@@ -11,6 +11,7 @@ from StringIO import StringIO
 from zope.interface import implements
 
 from Products.Zuul.facades import ZuulFacade
+from Products.Zuul import getFacade
 
 # Ugh.  Need the trunk versions.  Switch back to ZenModel when
 # Zenoss catches up 
@@ -59,7 +60,7 @@ class PuppetFacade(ZuulFacade):
         # Dump the results in sorted order to make file
         # comparisons easier.
         data = '\n'.join(sorted(data))
-        return data, dumpedCount
+        return data.lstrip('\n'), dumpedCount
 
     def importDevices(self, data, options={}):
         loader = BatchDeviceLoader(noopts=True)
@@ -82,4 +83,25 @@ class PuppetFacade(ZuulFacade):
             option = getattr(obj.options, name, None)
             if option is not None:
                 setattr(obj.options, name, value)
+
+    def listDevices(self, deviceClass='/'):
+        try:
+            path = self._dmd.Devices.getPrimaryUrlPath()
+            root = self._dmd.Devices.unrestrictedTraverse(path + deviceClass)
+        except KeyError:
+            log.error("%s is not a valid Device Organizer path under %s\n",
+                      deviceClass, self._dmd.Devices.getPrimaryUrlPath())
+            return []
+        devices = tuple(dev.id for dev in root.getSubDevicesGen())
+        return sorted(devices)
+
+    def deleteDevices(self, devices=()):
+        uids = []
+        for id in devices:
+            dev = self._dmd.Devices.findDeviceByIdExact(id)
+            if dev is not None:
+                uids.append(dev.getPrimaryUrlPath())
+        if uids:
+            devFacade = getFacade('device')
+            devFacade.deleteDevices(uids, deleteEvents=True, deletePerf=True)
 

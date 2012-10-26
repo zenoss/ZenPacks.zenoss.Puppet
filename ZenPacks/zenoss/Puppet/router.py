@@ -47,3 +47,25 @@ class PuppetRouter(DirectRouter):
             return DirectResponse.fail(msg=msg)
         return DirectResponse.succeed(data=data, stats=stats)
 
+    def listDevices(self, deviceClass='/'):
+        """
+        Create a list of all devices based at the device class
+        """
+        facade = self._getFacade()
+        data = facade.listDevices(deviceClass)
+        count = len(data)
+        return DirectResponse.succeed(data=data, count=count,
+                                      success=True)
+
+    def deleteDevices(self, devices=()):
+        """
+        Delete the list of specified device names
+        """
+        facade = self._getFacade()
+        try:
+            facade.deleteDevices(devices)
+        except Exception:
+            msg = "Unable to delete devices: %s" % devices
+            log.exception(msg)
+            return DirectResponse.fail(msg=msg)
+        return DirectResponse.succeed(msg="Deleted devices", success=True)
